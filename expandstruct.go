@@ -1,4 +1,4 @@
-package main
+package expandstruct
 
 import (
 	"fmt"
@@ -6,18 +6,16 @@ import (
 	"strings"
 )
 
-const (
-	DefaultSeparator = "."
-)
-
+// fieldByPath gets the reflect.Value from a field in a nested struct
+// the fieldPath is a dot seperated string of field names as one one
+// would use to access the string in go code. All field names are being
+// capitalized, as accessing an unexported field does not make sense.
 func fieldByPath(v reflect.Value, fieldPath string) (reflect.Value, error) {
 	names := strings.Split(fieldPath, ".")
 	res := v
-	// fmt.Printf("res: %v, type: %v, settable: %v\n", res.Interface(), res.Type(), res.CanSet())
 	for _, name := range names {
 		if v.Kind() == reflect.Struct {
-			res = res.FieldByName(name)
-			// fmt.Printf("res: %v, type: %v, settable: %v\n", res.Interface(), res.Type(), res.CanSet())
+			res = res.FieldByName(strings.Title(name))
 		} else {
 			return v, fmt.Errorf("v is not a struct of the given fieldPath: %s does not exists on the struct.", fieldPath)
 		}
@@ -26,14 +24,14 @@ func fieldByPath(v reflect.Value, fieldPath string) (reflect.Value, error) {
 	return res, nil
 }
 
+// ExpandToStruct expands the fieldPath value pairs in the map m into
+// the given nested struct s. FieldPaths have to be a dot separated
+// string of field names, as used when accessing the struct in go.
 func ExpandToStruct(m map[string]interface{}, s interface{}) error {
 	structVal := reflect.Indirect(reflect.ValueOf(s))
-	// fmt.Printf("structVal: %v, %v, %v\n", structVal.Interface(), structVal.Kind(), structVal.CanSet())
 	for k, v := range m {
-		// fmt.Printf("k: %v, v: %v\n", k, v)
 		mapVal := reflect.ValueOf(v)
 		fieldVal, err := fieldByPath(structVal, k)
-		// fmt.Printf("fieldVal: %v, settable: %v\n", fieldVal, fieldVal.CanSet())
 		if err != nil {
 			return err
 		}

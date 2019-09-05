@@ -1,4 +1,4 @@
-package main
+package expandstruct
 
 import (
 	"reflect"
@@ -22,6 +22,15 @@ func Test_fieldByPath(t *testing.T) {
 	s := T{0, 0.0, TT{"hallo", 0, 0.0}}
 	sVal := reflect.Indirect(reflect.ValueOf(&s))
 	fVal, err := fieldByPath(sVal, "T.A")
+
+	assert.Nil(t, err)
+	assert.Equal(t, s.T.A, fVal.Interface())
+}
+
+func Test_fieldByPathLowercase(t *testing.T) {
+	s := T{0, 0.0, TT{"hallo", 0, 0.0}}
+	sVal := reflect.Indirect(reflect.ValueOf(&s))
+	fVal, err := fieldByPath(sVal, "t.a")
 
 	assert.Nil(t, err)
 	assert.Equal(t, s.T.A, fVal.Interface())
