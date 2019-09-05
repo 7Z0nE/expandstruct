@@ -27,7 +27,7 @@ func fieldByPath(v reflect.Value, fieldPath string) (reflect.Value, error) {
 // ExpandToStruct expands the fieldPath value pairs in the map m into
 // the given nested struct s. FieldPaths have to be a dot separated
 // string of field names, as used when accessing the struct in go.
-func ExpandToStruct(m map[string]interface{}, s interface{}) error {
+func Expand(m map[string]interface{}, s interface{}) error {
 	structVal := reflect.Indirect(reflect.ValueOf(s))
 	for k, v := range m {
 		mapVal := reflect.ValueOf(v)

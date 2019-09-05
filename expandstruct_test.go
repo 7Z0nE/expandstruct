@@ -36,11 +36,11 @@ func Test_fieldByPathLowercase(t *testing.T) {
 	assert.Equal(t, s.T.A, fVal.Interface())
 }
 
-func Test_ExpandToStruct(t *testing.T) {
+func Test_Expand(t *testing.T) {
 	var m T
 	mm := map[string]interface{}{"I": 1, "J": 2.0, "T.A": "42", "T.B": 2, "T.C": 0.5}
 
-	err := ExpandToStruct(mm, &m)
+	err := Expand(mm, &m)
 
 	assert.Nil(t, err)
 	assert.Equal(t, m, T{1, 2.0, TT{"42", 2, 0.5}})
